@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin RFID - RoboTecno</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Admin RFID (will-E)</h1>
+        <p>Gestión de tarjetas autorizadas</p>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h2>Registrar Nueva Tarjeta</h2>
+            
+            <label for="uidInput">UID de la Tarjeta:</label>
+            <input type="text" id="uidInput" placeholder="Ej: A1B2C3D4">
+
+            <label for="nombreInput">Nombre del Usuario:</label>
+            <input type="text" id="nombreInput" placeholder="Ej: Juan Pérez">
+
+            <button id="registrarBtn">Registrar Tarjeta</button>
+        </div>
+
+        <div class="lista-container">
+            <h2>Tarjetas Registradas</h2>
+            <div id="listaTarjetas">
+                </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    
+    <script src="app.js"></script>
+</body>
+</html>
