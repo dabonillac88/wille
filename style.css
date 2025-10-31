@@ -6,16 +6,35 @@ body {
     color: #333;
 }
 
+/* --- ENCABEZADO MODIFICADO --- */
 header {
-    background-color: #004a99;
+    background-color: #6D0A0A; /* Color granate del escudo */
     color: white;
     padding: 20px;
-    text-align: center;
+    
+    /* Añadido para alinear imagen y texto */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
 }
+
+/* Estilo para la imagen del escudo en el header */
+#header-escudo {
+    height: 70px; /* Ajusta el tamaño según necesites */
+    width: 70px;
+}
+
+/* Contenedor para el texto del header */
+.header-texto {
+    text-align: left;
+}
+/* ------------------------------- */
 
 header h1 { margin: 0; }
 header p { margin: 5px 0 0; }
 
+/* Estructura de columnas */
 main {
     display: flex;
     flex-wrap: wrap;
@@ -24,29 +43,39 @@ main {
     gap: 30px;
 }
 
+.columna-forms, .columna-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.columna-lista {
+    flex-grow: 1;
+    min-width: 450px;
+}
+
 /* Contenedores */
 .form-container, .lista-container {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     padding: 25px;
-    width: 450px;
 }
 
 h2 {
-    border-bottom: 2px solid #004a99;
+    border-bottom: 2px solid #6D0A0A; /* Color granate del escudo */
     padding-bottom: 10px;
     margin-top: 0;
 }
 
 /* Formulario */
-.form-container label {
+label {
     display: block;
     font-weight: 600;
     margin-top: 15px;
 }
 
-.form-container input {
+input, select {
     width: 95%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -56,7 +85,7 @@ h2 {
 }
 
 button {
-    background-color: #007bff;
+    background-color: #1E5631; /* Color verde del escudo */
     color: white;
     border: none;
     padding: 12px 20px;
@@ -65,35 +94,72 @@ button {
     font-size: 1em;
     font-weight: 600;
     margin-top: 20px;
-    transition: background-color 0.2s;
+    width: 100%;
 }
+button:hover { background-color: #1A432A; } /* Verde más oscuro */
 
-button:hover {
-    background-color: #0056b3;
-}
+/* Estilo Tienda */
+#tienda-container button { 
+    background-color: #D4AF37; /* Color dorado del escudo */
+    color: #333; /* Texto oscuro para mejor contraste */
+} 
+#tienda-container button:hover { background-color: #B89B3E; } /* Dorado más oscuro */
 
-/* Lista de tarjetas */
+/* Lista de tarjetas (ACTUALIZADO) */
 .tarjeta-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
+    display: grid;
+    grid-template-areas: 
+        "info puntaje"
+        "id-estudiante puntaje"
+        "id-tarjeta puntaje"
+        "eliminar eliminar";
     border: 1px solid #eee;
-    border-radius: 4px;
+    border-radius: 8px;
+    padding: 15px;
     margin-bottom: 10px;
+    gap: 5px 15px;
 }
 
-.tarjeta-item span {
-    font-size: 0.95em;
+.tarjeta-info { grid-area: info; }
+.tarjeta-info strong { 
+    font-size: 1.2em; 
+    color: #6D0A0A; /* Color granate del escudo */
 }
+.tarjeta-info span { font-style: italic; color: #555; }
+
+.tarjeta-id-est {
+    grid-area: id-estudiante;
+    font-size: 0.9em;
+    color: #333;
+}
+.tarjeta-id-uid {
+    grid-area: id-tarjeta;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.tarjeta-puntaje {
+    grid-area: puntaje;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px;
+}
+.tarjeta-puntaje strong {
+    font-size: 2em;
+    color: #1E5631; /* Color verde del escudo */
+}
+.tarjeta-puntaje span { font-size: 0.8em; }
 
 button.eliminarBtn {
-    background-color: #dc3545;
+    grid-area: eliminar;
+    background-color: #dc3545; /* Mantenemos el rojo de "peligro" estándar */
     padding: 8px 12px;
-    margin: 0;
+    margin: 10px 0 0 0;
     font-size: 0.9em;
 }
-
-button.eliminarBtn:hover {
-    background-color: #c82333;
-}
+button.eliminarBtn:hover { background-color: #c82333; }
