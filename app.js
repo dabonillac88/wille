@@ -1,9 +1,8 @@
 // ======================================================
 // 1. CONFIGURACIÓN DE FIREBASE
-// Pega aquí tu objeto de configuración del Paso 1
 // ======================================================
 const firebaseConfig = {
-     apiKey: "AIzaSyBXhrUPvrQu-wq0H6994asVWNo4p9npy2E",
+  apiKey: "AIzaSyBXhrUPvrQu-wq0H6994asVWNo4p9npy2E",
   authDomain: "will-e-d8548.firebaseapp.com",
   databaseURL: "https://will-e-d8548-default-rtdb.firebaseio.com",
   projectId: "will-e-d8548",
@@ -11,100 +10,211 @@ const firebaseConfig = {
   messagingSenderId: "826538884677",
   appId: "1:826538884677:web:55220d58adc594e355ad2c"
 };
-
 // ======================================================
 // 2. INICIALIZAR APP Y BASE DE DATOS
-// (¡Este código NO usa 'import'!)
 // ======================================================
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-const dbRef = database.ref('/tarjetas_autorizadas'); // Referencia al nodo que usa el ESP32
+// ¡NUEVO! Dos referencias
+const dbRefEstudiantes = database.ref('/estudiantes');
+const dbRefMapa = database.ref('/mapa_uid_a_id');
+const dbRefHistorial = database.ref('/historial_canjes');
 
 // ======================================================
-// 3. REFERENCIAS A ELEMENTOS HTML
+// 3. LISTA DE PREMIOS (Sin cambios)
 // ======================================================
+const PREMIOS = [
+    { id: "premio1", nombre: "Puntos extra en tarea (+1)", costo: 10 },
+    { id: "premio2", nombre: "Más tiempo de entrega (+1 día)", costo: 25 },
+    { id: "premio3", nombre: "Descuento 10% Tienda Escolar", costo: 50 },
+    { id: "premio4", nombre: "Jugo gratis en la tienda", costo: 15 },
+];
+
+// ======================================================
+// 4. REFERENCIAS A ELEMENTOS HTML (Actualizado)
+// ======================================================
+const idEstudianteInput = document.getElementById('idEstudianteInput'); // ¡NUEVO!
 const uidInput = document.getElementById('uidInput');
 const nombreInput = document.getElementById('nombreInput');
+const gradoInput = document.getElementById('gradoInput');
 const registrarBtn = document.getElementById('registrarBtn');
 const listaTarjetas = document.getElementById('listaTarjetas');
 
+const idCanjeInput = document.getElementById('idCanjeInput'); // ¡Actualizado!
+const premioSelect = document.getElementById('premioSelect');
+const redimirBtn = document.getElementById('redimirBtn');
+
 // ======================================================
-// 4. FUNCIÓN PARA REGISTRAR (ESCRIBIR DATOS)
+// 5. CARGAR PREMIOS EN EL DROPDOWN (Sin cambios)
+// ======================================================
+function cargarPremios() {
+    PREMIOS.forEach(premio => {
+        const option = document.createElement('option');
+        option.value = premio.id;
+        option.textContent = `${premio.nombre} (${premio.costo} puntos)`;
+        premioSelect.appendChild(option);
+    });
+}
+cargarPremios();
+
+// ======================================================
+// 6. FUNCIÓN PARA REGISTRAR (¡LÓGICA ACTUALIZADA!)
 // ======================================================
 registrarBtn.onclick = () => {
-    // Obtener valores (y convertir UID a mayúsculas como hace el ESP32)
-    const uid = uidInput.value.toUpperCase();
-    const nombre = nombreInput.value;
+    const idEstudiante = idEstudianteInput.value.trim();
+    const uid = uidInput.value.toUpperCase().trim();
+    const nombre = nombreInput.value.trim();
+    const grado = gradoInput.value.trim();
 
-    if (uid && nombre) {
-        // Objeto de datos que se guardará
+    if (idEstudiante && uid && nombre && grado) {
         const datosUsuario = {
             nombre: nombre,
-            registrado_el: new Date().toISOString() // Guardar fecha de registro
+            grado: grado,
+            puntaje: 0,
+            uid_tarjeta: uid // Guardamos el UID aquí
         };
 
-        // Escribimos en Firebase usando el UID como clave
-        dbRef.child(uid).set(datosUsuario)
+        // 1. Escribir en la lista principal de estudiantes
+        dbRefEstudiantes.child(idEstudiante).set(datosUsuario)
             .then(() => {
-                alert('¡Tarjeta registrada con éxito!');
-                // Limpiar los campos
+                
+                // 2. Escribir en el mapa de búsqueda (para el ESP32)
+                return dbRefMapa.child(uid).set(idEstudiante);
+            })
+            .then(() => {
+                alert('¡Estudiante registrado con éxito!');
+                // Limpiar campos
+                idEstudianteInput.value = '';
                 uidInput.value = '';
                 nombreInput.value = '';
+                gradoInput.value = '';
             })
             .catch((error) => {
                 console.error('Error al registrar: ', error);
-                alert('Error al registrar la tarjeta.');
+                alert('Error al registrar. Revisa que el ID o UID no esté duplicado.');
             });
     } else {
-        alert('Por favor, completa ambos campos.');
+        alert('Por favor, completa todos los campos.');
     }
 };
 
 // ======================================================
-// 5. FUNCIÓN PARA LEER Y MOSTRAR (EN TIEMPO REAL)
+// 7. FUNCIÓN PARA LEER Y MOSTRAR (¡LÓGICA ACTUALIZADA!)
 // ======================================================
-dbRef.on('value', (snapshot) => {
-    listaTarjetas.innerHTML = ''; // Limpiar la lista antes de recargar
+dbRefEstudiantes.on('value', (snapshot) => {
+    listaTarjetas.innerHTML = ''; 
     
     if (snapshot.exists()) {
-        // Recorrer todos los hijos del nodo 'tarjetas_autorizadas'
         snapshot.forEach((childSnapshot) => {
-            const uid = childSnapshot.key; // El UID (A1B2C3D4)
-            const datos = childSnapshot.val(); // El objeto {nombre: "Juan"}
+            const idEstudiante = childSnapshot.key; // ¡NUEVO! Esta es la llave
+            const datos = childSnapshot.val();
+            
+            const puntaje = datos.puntaje || 0; 
+            const grado = datos.grado || "N/A";
+            const uid = datos.uid_tarjeta || "N/A"; // ¡NUEVO!
 
             // Crear el HTML para cada tarjeta
             const tarjetaDiv = document.createElement('div');
             tarjetaDiv.classList.add('tarjeta-item');
             
             tarjetaDiv.innerHTML = `
-                <span><strong>UID:</strong> ${uid}</span>
-                <span><strong>Nombre:</strong> ${datos.nombre}</span>
-                <button class="eliminarBtn" data-uid="${uid}">Eliminar</button>
+                <div class="tarjeta-info">
+                    <strong>${datos.nombre}</strong>
+                    <span>${grado}</span>
+                </div>
+                <div class="tarjeta-id-est"><strong>ID:</strong> ${idEstudiante}</div>
+                <div class="tarjeta-id-uid"><strong>UID:</strong> ${uid}</div>
+                <div class="tarjeta-puntaje">
+                    <strong>${puntaje}</strong>
+                    <span>puntos</span>
+                </div>
+                <button class="eliminarBtn" data-id-estudiante="${idEstudiante}" data-uid-tarjeta="${uid}">Eliminar</button>
             `;
             
             listaTarjetas.appendChild(tarjetaDiv);
         });
     } else {
-        listaTarjetas.innerHTML = '<p>No hay tarjetas registradas.</p>';
+        listaTarjetas.innerHTML = '<p>No hay estudiantes registrados.</p>';
     }
 
     // ======================================================
-    // 6. FUNCIÓN PARA ELIMINAR (AÑADIR EVENTO A BOTONES)
+    // 8. FUNCIÓN PARA ELIMINAR (¡LÓGICA ACTUALIZADA!)
     // ======================================================
     document.querySelectorAll('.eliminarBtn').forEach(button => {
         button.onclick = (e) => {
-            const uidParaEliminar = e.target.getAttribute('data-uid');
-            if (confirm(`¿Seguro que quieres eliminar la tarjeta ${uidParaEliminar}?`)) {
+            const idEst = e.target.getAttribute('data-id-estudiante');
+            const uidTarjeta = e.target.getAttribute('data-uid-tarjeta');
+            
+            if (confirm(`¿Seguro que quieres eliminar al estudiante ${idEst}?`)) {
                 
-                // Eliminar el hijo (la tarjeta) de Firebase
-                dbRef.child(uidParaEliminar).remove()
+                // 1. Borrar de la lista de estudiantes
+                dbRefEstudiantes.child(idEst).remove()
                     .then(() => {
-                        alert('Tarjeta eliminada.');
+                        // 2. Borrar del mapa de búsqueda
+                        if (uidTarjeta !== "N/A") {
+                            return dbRefMapa.child(uidTarjeta).remove();
+                        }
                     })
-                    .catch((error) => {
-                        console.error('Error al eliminar: ', error);
-                    });
+                    .then(() => {
+                        alert('Estudiante eliminado.');
+                    })
+                    .catch((error) => console.error('Error al eliminar: ', error));
             }
         };
     });
 });
+
+// ======================================================
+// 9. FUNCIÓN PARA REDIMIR PUNTOS (¡LÓGICA ACTUALIZADA!)
+// ======================================================
+redimirBtn.onclick = () => {
+    const idEstudiante = idCanjeInput.value.trim(); // ¡NUEVO! Buscamos por ID
+    const premioId = premioSelect.value;
+    
+    if (!idEstudiante) {
+        alert("Por favor, ingresa el ID del estudiante.");
+        return;
+    }
+
+    const premio = PREMIOS.find(p => p.id === premioId);
+    if (!premio) {
+        alert("Error, premio no válido.");
+        return;
+    }
+    
+    const costoPremio = premio.costo;
+    const refUsuario = dbRefEstudiantes.child(idEstudiante); // ¡NUEVO! Ruta por ID
+
+    refUsuario.once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+            alert("Error: No se encontró un estudiante con ese ID.");
+            return;
+        }
+
+        const datosUsuario = snapshot.val();
+        const puntajeActual = datosUsuario.puntaje || 0;
+
+        if (puntajeActual < costoPremio) {
+            alert(`¡Puntos insuficientes! Se necesitan ${costoPremio} y el usuario tiene ${puntajeActual}.`);
+            return;
+        }
+
+        const nuevoPuntaje = puntajeActual - costoPremio;
+        
+        refUsuario.update({ puntaje: nuevoPuntaje })
+            .then(() => {
+                alert(`¡Canje exitoso! \nUsuario: ${datosUsuario.nombre}\nPremio: ${premio.nombre}\nNuevo puntaje: ${nuevoPuntaje}`);
+                idCanjeInput.value = ''; // Limpiar campo
+                
+                const logCanje = {
+                    id_estudiante: idEstudiante, // ¡Actualizado!
+                    nombre: datosUsuario.nombre,
+                    premio: premio.nombre,
+                    costo: costoPremio,
+                    fecha: new Date().toISOString()
+                };
+                dbRefHistorial.push(logCanje);
+            })
+            .catch((error) => console.error("Error al actualizar puntos: ", error));
+    });
+};
