@@ -6,31 +6,12 @@ body {
     color: #333;
 }
 
-/* --- ENCABEZADO MODIFICADO --- */
 header {
-    background-color: #6D0A0A; /* Color granate del escudo */
+    background-color: #004a99;
     color: white;
     padding: 20px;
-    
-    /* Añadido para alinear imagen y texto */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
+    text-align: center;
 }
-
-/* Estilo para la imagen del escudo en el header */
-#header-escudo {
-    height: 70px; /* Ajusta el tamaño según necesites */
-    width: 70px;
-}
-
-/* Contenedor para el texto del header */
-.header-texto {
-    text-align: left;
-}
-/* ------------------------------- */
-
 header h1 { margin: 0; }
 header p { margin: 5px 0 0; }
 
@@ -63,7 +44,7 @@ main {
 }
 
 h2 {
-    border-bottom: 2px solid #6D0A0A; /* Color granate del escudo */
+    border-bottom: 2px solid #004a99;
     padding-bottom: 10px;
     margin-top: 0;
 }
@@ -85,7 +66,7 @@ input, select {
 }
 
 button {
-    background-color: #1E5631; /* Color verde del escudo */
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -96,14 +77,11 @@ button {
     margin-top: 20px;
     width: 100%;
 }
-button:hover { background-color: #1A432A; } /* Verde más oscuro */
+button:hover { background-color: #0056b3; }
 
 /* Estilo Tienda */
-#tienda-container button { 
-    background-color: #D4AF37; /* Color dorado del escudo */
-    color: #333; /* Texto oscuro para mejor contraste */
-} 
-#tienda-container button:hover { background-color: #B89B3E; } /* Dorado más oscuro */
+#tienda-container button { background-color: #28a745; }
+#tienda-container button:hover { background-color: #218838; }
 
 /* Lista de tarjetas (ACTUALIZADO) */
 .tarjeta-item {
@@ -121,10 +99,7 @@ button:hover { background-color: #1A432A; } /* Verde más oscuro */
 }
 
 .tarjeta-info { grid-area: info; }
-.tarjeta-info strong { 
-    font-size: 1.2em; 
-    color: #6D0A0A; /* Color granate del escudo */
-}
+.tarjeta-info strong { font-size: 1.2em; color: #004a99; }
 .tarjeta-info span { font-style: italic; color: #555; }
 
 .tarjeta-id-est {
@@ -151,13 +126,13 @@ button:hover { background-color: #1A432A; } /* Verde más oscuro */
 }
 .tarjeta-puntaje strong {
     font-size: 2em;
-    color: #1E5631; /* Color verde del escudo */
+    color: #007bff;
 }
 .tarjeta-puntaje span { font-size: 0.8em; }
 
 button.eliminarBtn {
     grid-area: eliminar;
-    background-color: #dc3545; /* Mantenemos el rojo de "peligro" estándar */
+    background-color: #dc3545;
     padding: 8px 12px;
     margin: 10px 0 0 0;
     font-size: 0.9em;
