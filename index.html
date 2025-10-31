@@ -5,31 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin RFID - RoboTecno</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="escudo.png" type="image/png">
 </head>
 <body>
 
     <header>
-        <h1>Admin RFID (will-E)</h1>
-        <p>Gestión de tarjetas autorizadas</p>
+        <img src="escudo.png" alt="Escudo" id="header-escudo">
+        <div class="header-texto">
+            <h1>Admin RFID (will-E)</h1>
+            <p>Gestión de Reciclaje y Puntos</p>
+        </div>
     </header>
 
     <main>
-        <div class="form-container">
-            <h2>Registrar Nueva Tarjeta</h2>
-            
-            <label for="uidInput">UID de la Tarjeta:</label>
-            <input type="text" id="uidInput" placeholder="Ej: A1B2C3D4">
+        <div class="columna-forms">
+            <div class="form-container">
+                <h2>Registrar Nuevo Estudiante</h2>
+                
+                <label for="idEstudianteInput">ID del Estudiante (Matrícula):</label>
+                <input type="text" id="idEstudianteInput" placeholder="Ej: 100200300">
 
-            <label for="nombreInput">Nombre del Usuario:</label>
-            <input type="text" id="nombreInput" placeholder="Ej: Juan Pérez">
+                <label for="nombreInput">Nombre del Estudiante:</label>
+                <input type="text" id="nombreInput" placeholder="Ej: Juan Pérez">
+                
+                <label for="gradoInput">Grado/Curso:</label>
+                <input type="text" id="gradoInput" placeholder="Ej: 5to A">
 
-            <button id="registrarBtn">Registrar Tarjeta</button>
+                <label for="uidInput">UID de la Tarjeta (RFID):</label>
+                <input type="text" id="uidInput" placeholder="Ej: A1B2C3D4 (de la tarjeta)">
+
+                <button id="registrarBtn">Registrar Estudiante</button>
+            </div>
+
+            <div class="form-container" id="tienda-container">
+                <h2>Tienda de Premios</h2>
+                
+                <label for="idCanjeInput">ID del Estudiante:</label>
+                <input type="text" id="idCanjeInput" placeholder="Escribir ID del estudiante">
+
+                <label for="premioSelect">Seleccionar Premio:</label>
+                <select id="premioSelect">
+                    </select>
+
+                <button id="redimirBtn">Redimir Premio</button>
+            </div>
         </div>
 
-        <div class="lista-container">
-            <h2>Tarjetas Registradas</h2>
-            <div id="listaTarjetas">
-                </div>
+        <div class="columna-lista">
+            <div class="lista-container">
+                <h2>Estudiantes Registrados</h2>
+                <div id="listaTarjetas">
+                    </div>
+            </div>
         </div>
     </main>
 
